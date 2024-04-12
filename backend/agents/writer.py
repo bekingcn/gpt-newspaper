@@ -3,6 +3,9 @@ from langchain.adapters.openai import convert_openai_messages
 from langchain_openai import ChatOpenAI
 import json5 as json
 
+# gpt-4-0125-preview
+model_name = "gpt-3.5-turbo"
+
 sample_json = """
 {
   "title": title of the article,
@@ -38,16 +41,17 @@ class WriterAgent:
 
     def writer(self, query: str, sources: list):
 
+        # an in-depth analysis of the sources
         prompt = [{
             "role": "system",
-            "content": "You are a newspaper writer. Your sole purpose is to write a well-written article about a "
+            "content": "You are a newspaper writer. Your sole purpose is to write a well-written article in chinese about a "
                        "topic using a list of articles.\n "
         }, {
             "role": "user",
             "content": f"Today's date is {datetime.now().strftime('%d/%m/%Y')}\n."
                        f"Query or Topic: {query}"
                        f"{sources}\n"
-                       f"Your task is to write a critically acclaimed article for me about the provided query or "
+                       f"Your task is to write a critically acclaimed article with in-depth analysis for me about the provided query or "
                        f"topic based on the sources.\n "
                        f"Please return nothing but a JSON in the following format:\n"
                        f"{sample_json}\n "
@@ -59,13 +63,13 @@ class WriterAgent:
             "response_format": {"type": "json_object"}
         }
 
-        response = ChatOpenAI(model='gpt-4-0125-preview', max_retries=1, model_kwargs=optional_params).invoke(lc_messages).content
+        response = ChatOpenAI(model=model_name, max_retries=1, model_kwargs=optional_params).invoke(lc_messages).content
         return json.loads(response)
 
     def revise(self, article: dict):
         prompt = [{
             "role": "system",
-            "content": "You are a newspaper editor. Your sole purpose is to edit a well-written article about a "
+            "content": "You are a newspaper editor. Your sole purpose is to edit a well-written article in chinese about a "
                        "topic based on given critique\n "
         }, {
             "role": "user",
@@ -83,7 +87,7 @@ class WriterAgent:
             "response_format": {"type": "json_object"}
         }
 
-        response = ChatOpenAI(model='gpt-4-0125-preview', max_retries=1, model_kwargs=optional_params).invoke(lc_messages).content
+        response = ChatOpenAI(model=model_name, max_retries=1, model_kwargs=optional_params).invoke(lc_messages).content
         response = json.loads(response)
         print(f"For article: {article['title']}")
         print(f"Writer Revision Message: {response['message']}\n")

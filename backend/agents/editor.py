@@ -32,7 +32,7 @@ class EditorAgent:
 
     def load_html_template(self):
         template_path = os.path.join(os.path.dirname(__file__), '..', 'templates', 'newspaper', 'layouts', self.layout)
-        with open(template_path) as f:
+        with open(template_path, encoding="utf-8") as f:
             return f.read()
 
     def editor(self, articles):
